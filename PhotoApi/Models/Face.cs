@@ -12,7 +12,7 @@ namespace PhotoApi.Models
         [Key]
         public int Id { get; set; }
         public int PersonId { get; set; }
-        public byte[] Photo { get; set; }
+        public string Photo { get; set; }
         public virtual Person Person { get; set; }
     }
 }
