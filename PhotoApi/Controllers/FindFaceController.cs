@@ -6,6 +6,10 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhotoApi.Models;
+using Microsoft.AspNetCore.Mvc.Formatters.Json;
+using System.IO;
+using System.Text;
+using System.Text.Json;
 
 namespace PhotoApi.Controllers
 {
@@ -21,10 +25,11 @@ namespace PhotoApi.Controllers
         }
 
         // GET: api/FindFace/5
-        [HttpGet("{photo}")]
-        public async Task<ActionResult<Person>> GetPerson(byte [] photo)
+        //[HttpGet("{photo}")]
+        [HttpGet]
+        public async Task<ActionResult<Person>> GetPerson([FromBody]string photo)
         {
-            var person = await _context.Faces.Where(f => f.Photo == photo).Include(f => f.Person).ToListAsync() ;
+            var person = await _context.Faces.Where(f => f.Photo ==photo).Select(f => f.Person).Include(p=>p.Faces).ToListAsync();
 
             if (person == null)
             {

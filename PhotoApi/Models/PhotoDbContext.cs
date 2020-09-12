@@ -44,13 +44,13 @@ namespace PhotoApi.Models
                 new Face
                 {
                     Id = -1,
-                    Photo = new byte[] { 1,1,1,1,1},
+                    Photo = "AQABAAEB",
                     PersonId = firstPerson.Id
                 },
                new Face
                {
                    Id = -2,
-                   Photo = new byte[] { 1, 0, 1, 0, 1, 1 },
+                   Photo = "AQEBAQE=",
                    PersonId = secondPerson.Id
                }           
             );
