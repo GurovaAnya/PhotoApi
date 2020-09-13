@@ -24,8 +24,7 @@ namespace PhotoApi.Controllers
             _context = context;
         }
 
-        // GET: api/FindFace
-        //[HttpGet("{photo}")]
+        // GET: api/find-face
         [HttpGet]
         public async Task<ActionResult<Person>> FindFace([FromBody] string photo)
         {
