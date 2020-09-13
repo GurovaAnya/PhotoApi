@@ -24,14 +24,14 @@ namespace PhotoApi.Controllers
             _context = context;
         }
 
-        // GET: api/FindFace/5
+        // GET: api/FindFace
         //[HttpGet("{photo}")]
         [HttpGet]
-        public async Task<ActionResult<Person>> GetPerson([FromBody]string photo)
+        public async Task<ActionResult<Person>> FindFace([FromBody] string photo)
         {
-            var person = await _context.Faces.Where(f => f.Photo ==photo).Select(f => f.Person).Include(p=>p.Faces).ToListAsync();
+            var person = await _context.Faces.Where(f => f.Photo == photo).Select(f => f.Person).ToListAsync();
 
-            if (person == null)
+            if (person.Count == 0)
             {
                 return NotFound();
             }
