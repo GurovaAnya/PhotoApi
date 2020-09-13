@@ -88,12 +88,17 @@ namespace PhotoApi.Controllers
 
         // DELETE: api/person/{personId}/Face/5
         [HttpDelete("{id}")]
-        public async Task<ActionResult<Face>> DeleteFace(int id)
+        public async Task<ActionResult<Face>> DeleteFace(int id, int personId)
         {
             var face = await _context.Faces.FindAsync(id);
             if (face == null)
             {
                 return NotFound();
+            }
+
+            if (face.PersonId != personId)
+            {
+                return BadRequest();
             }
 
             _context.Faces.Remove(face);
