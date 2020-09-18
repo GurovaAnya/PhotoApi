@@ -151,5 +151,14 @@ C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\obj\Debug\netcor
 C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\obj\Debug\netcoreapp3.1\PhotoApi.pdb
 C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\obj\Debug\netcoreapp3.1\PhotoApi.genruntimeconfig.cache
 C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\bin\Debug\netcoreapp3.1\Microsoft.AspNetCore.JsonPatch.dll
+C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\bin\Debug\netcoreapp3.1\Google.Api.Gax.dll
+C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\bin\Debug\netcoreapp3.1\Google.Api.Gax.Rest.dll
+C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\bin\Debug\netcoreapp3.1\Google.Apis.dll
+C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\bin\Debug\netcoreapp3.1\Google.Apis.Auth.PlatformServices.dll
+C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\bin\Debug\netcoreapp3.1\Google.Apis.Auth.dll
+C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\bin\Debug\netcoreapp3.1\Google.Apis.Core.dll
+C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\bin\Debug\netcoreapp3.1\Google.Apis.Storage.v1.dll
+C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\bin\Debug\netcoreapp3.1\Google.Cloud.Storage.V1.dll
+C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\bin\Debug\netcoreapp3.1\AutoMapper.dll
 C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\obj\Debug\netcoreapp3.1\PhotoApi.csproj.CoreCompileInputs.cache
 C:\Users\anna3\Desktop\fun\Макроскоп\PhotoApi\PhotoApi\obj\Debug\netcoreapp3.1\PhotoApi.MvcApplicationPartsAssemblyInfo.cache

@@ -28,14 +28,17 @@ namespace PhotoApi.Migrations
                     b.Property<int>("PersonId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Photo")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("PhotoHash")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PhotoName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PersonId");
 
-                    b.HasIndex("Photo");
+                    b.HasIndex("PhotoHash");
 
                     b.ToTable("Faces");
 
@@ -44,13 +47,13 @@ namespace PhotoApi.Migrations
                         {
                             Id = -1,
                             PersonId = -1,
-                            Photo = "AQABAAEB"
+                            PhotoHash = 148592049
                         },
                         new
                         {
                             Id = -2,
                             PersonId = -2,
-                            Photo = "AQEBAQE="
+                            PhotoHash = 148593649
                         });
                 });
 

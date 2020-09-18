@@ -9,8 +9,8 @@ using PhotoApi.Models;
 namespace PhotoApi.Migrations
 {
     [DbContext(typeof(PhotoDbContext))]
-    [Migration("20200912162636_ChangePhotoType")]
-    partial class ChangePhotoType
+    [Migration("20200917192919_Initial")]
+    partial class Initial
     {
         protected override void BuildTargetModel(ModelBuilder modelBuilder)
         {
@@ -30,14 +30,17 @@ namespace PhotoApi.Migrations
                     b.Property<int>("PersonId")
                         .HasColumnType("int");
 
-                    b.Property<string>("Photo")
-                        .HasColumnType("nvarchar(450)");
+                    b.Property<int>("PhotoHash")
+                        .HasColumnType("int");
+
+                    b.Property<string>("PhotoName")
+                        .HasColumnType("nvarchar(max)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("PersonId");
 
-                    b.HasIndex("Photo");
+                    b.HasIndex("PhotoHash");
 
                     b.ToTable("Faces");
 
@@ -46,13 +49,13 @@ namespace PhotoApi.Migrations
                         {
                             Id = -1,
                             PersonId = -1,
-                            Photo = "AQABAAEB"
+                            PhotoHash = 148592049
                         },
                         new
                         {
                             Id = -2,
                             PersonId = -2,
-                            Photo = "AQEBAQE="
+                            PhotoHash = 148593649
                         });
                 });
 
