@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhotoApi.Models;
+using PhotoApi.ViewModels;
 
 namespace PhotoApi.Controllers
 {
@@ -22,9 +23,9 @@ namespace PhotoApi.Controllers
 
         // GET: api/Person
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Person>>> GetPeople()
+        public async Task<ActionResult<IEnumerable<PersonViewModel>>> GetPeople()
         {
-            return await _context.People.ToListAsync();
+            return await _context.People.Select(p=>MapToViewModel(p)).ToListAsync();
         }
 
         // GET: api/Person/5
@@ -104,6 +105,17 @@ namespace PhotoApi.Controllers
         private bool PersonExists(int id)
         {
             return _context.People.Any(e => e.Id == id);
+        }
+
+        private PersonViewModel MapToViewModel(Person person)
+        {
+            return new PersonViewModel
+            {
+                Id = person.Id,
+                FirstName = person.FirstName,
+                LastName = person.LastName,
+                Patronymic = person.Patronymic
+            };
         }
     }
 }

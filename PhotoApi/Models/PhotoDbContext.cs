@@ -14,7 +14,7 @@ namespace PhotoApi.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             modelBuilder.Entity<Face>()
-                .HasIndex(f => f.Photo);
+                .HasIndex(f => f.PhotoHash);
             Seed(modelBuilder);
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
@@ -44,13 +44,13 @@ namespace PhotoApi.Models
                 new Face
                 {
                     Id = -1,
-                    Photo = "AQABAAEB",
+                    PhotoHash = 148592049,
                     PersonId = firstPerson.Id
                 },
                new Face
                {
                    Id = -2,
-                   Photo = "AQEBAQE=",
+                   PhotoHash = 148593649,
                    PersonId = secondPerson.Id
                }           
             );
