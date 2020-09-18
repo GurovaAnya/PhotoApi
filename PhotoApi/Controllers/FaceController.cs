@@ -3,7 +3,6 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
-using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PhotoApi.Models;
 using PhotoApi.Storage;
@@ -28,14 +27,10 @@ namespace PhotoApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FaceViewModel>>> GetFaces(int personId)
         {
-            var faces = await _context.Faces.Where(f => f.PersonId == personId).ToListAsync();
-            var faceVMs = new List<FaceViewModel>();
-            foreach (var face in faces)
-                faceVMs.Add(await MapToViewModel(face,_googleStorage));
-            return faceVMs;
+            var face = await _context.Faces.Where(f=>f.PersonId==personId).Select(f=>MapToViewModel(f)).ToListAsync();
+            return face;
         }
 
-        
         // GET: api/person/{personId}/Face/5
         [HttpGet("{id}")]
         public async Task<ActionResult<FaceViewModel>> GetFace(int id, int personId)
