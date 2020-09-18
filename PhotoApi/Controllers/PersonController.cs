@@ -107,7 +107,7 @@ namespace PhotoApi.Controllers
             return _context.People.Any(e => e.Id == id);
         }
 
-        private PersonViewModel MapToViewModel(Person person)
+        private static PersonViewModel MapToViewModel(Person person)
         {
             return new PersonViewModel
             {
