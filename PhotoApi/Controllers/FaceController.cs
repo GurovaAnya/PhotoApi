@@ -25,9 +25,9 @@ namespace PhotoApi.Controllers
 
         // GET: api/person/{personId}/Face
         [HttpGet]
-        public async Task<ActionResult<IEnumerable<Face>>> GetFaces(int personId)
+        public async Task<ActionResult<IEnumerable<FaceViewModel>>> GetFaces(int personId)
         {
-            var face = await _context.Faces.Where(f=>f.PersonId==personId).ToListAsync();
+            var face = await _context.Faces.Where(f=>f.PersonId==personId).Select(f=>MapToViewModel(f)).ToListAsync();
             return face;
         }
 
@@ -157,6 +157,16 @@ namespace PhotoApi.Controllers
         private bool FaceExists(int id)
         {
             return _context.Faces.Any(e => e.Id == id);
+        }
+
+        private static async Task<FaceViewModel> MapToViewModel(Face face, GoogleStorage googleStorage)
+        {
+            return new FaceViewModel
+            {
+                Id = face.Id,
+                Photo = await googleStorage.Read(face.PhotoName),
+                PersonId = face.PersonId
+            };
         }
     }
 }
