@@ -19,7 +19,7 @@ namespace PhotoApi.Models
         }
         protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
         {
-            optionsBuilder.UseSqlServer(@"Data Source=LAPTOP-LOBOORA0\SQLEXPRESS;Initial Catalog=PhotoBase;Integrated Security=True");
+            optionsBuilder.UseSqlServer(@"Server=tcp:photoapi.database.windows.net,1433;Initial Catalog=PhotoBase;Persist Security Info=False;User ID=anna;Password=qwerty123=;MultipleActiveResultSets=False;Encrypt=True;TrustServerCertificate=False;Connection Timeout=30;");
         }
 
 
@@ -44,13 +44,15 @@ namespace PhotoApi.Models
                 new Face
                 {
                     Id = -1,
-                    PhotoHash = 148592049,
+                    PhotoHash = 1924905495,
+                    PhotoName = "637360586020601329",
                     PersonId = firstPerson.Id
                 },
                new Face
                {
                    Id = -2,
-                   PhotoHash = 148593649,
+                   PhotoHash = 1429759506,
+                   PhotoName = "637360612095630831",
                    PersonId = secondPerson.Id
                }           
             );

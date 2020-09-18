@@ -47,13 +47,15 @@ namespace PhotoApi.Migrations
                         {
                             Id = -1,
                             PersonId = -1,
-                            PhotoHash = 148592049
+                            PhotoHash = 1924905495,
+                            PhotoName = "637360586020601329"
                         },
                         new
                         {
                             Id = -2,
                             PersonId = -2,
-                            PhotoHash = 148593649
+                            PhotoHash = 1429759506,
+                            PhotoName = "637360612095630831"
                         });
                 });
 

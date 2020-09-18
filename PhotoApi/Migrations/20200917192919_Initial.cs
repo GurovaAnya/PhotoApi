@@ -55,12 +55,12 @@ namespace PhotoApi.Migrations
             migrationBuilder.InsertData(
                 table: "Faces",
                 columns: new[] { "Id", "PersonId", "PhotoHash", "PhotoName" },
-                values: new object[] { -1, -1, 148592049, null });
+                values: new object[] { -1, -1, 1924905495, "637360586020601329" });
 
             migrationBuilder.InsertData(
                 table: "Faces",
                 columns: new[] { "Id", "PersonId", "PhotoHash", "PhotoName" },
-                values: new object[] { -2, -2, 148593649, null });
+                values: new object[] { -2, -2, 1429759506, "637360612095630831" });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Faces_PersonId",
