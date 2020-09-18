@@ -2,14 +2,11 @@
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhotoApi.Models;
-using Microsoft.AspNetCore.Mvc.Formatters.Json;
-using System.IO;
-using System.Text;
-using System.Text.Json;
+using PhotoApi.Storage;
+using PhotoApi.ViewModels;
 
 namespace PhotoApi.Controllers
 {
@@ -18,24 +15,59 @@ namespace PhotoApi.Controllers
     public class FindFaceController : ControllerBase
     {
         private readonly PhotoDbContext _context;
+        private readonly GoogleStorage _googleStorage;
 
         public FindFaceController(PhotoDbContext context)
         {
             _context = context;
+            _googleStorage = new GoogleStorage("ivory-plane-277612", "ivory-plane-277612-bucket");
         }
 
         // GET: api/find-face
         [HttpGet]
-        public async Task<ActionResult<Person>> FindFace([FromBody] string photo)
+        public async Task<ActionResult<PersonViewModel>> FindFace([FromBody] byte [] photo)
         {
-            var person = await _context.Faces.Where(f => f.Photo == photo).Select(f => f.Person).ToListAsync();
+            int hash = Face.CreateHash(photo);
+            var faces = await _context.Faces.Where(f => f.PhotoHash == hash).Include(f => f.Person).ToListAsync();
 
-            if (person.Count == 0)
+            if (faces.Count == 0)
             {
                 return NotFound();
             }
 
-            return new JsonResult(person);
+            if (faces.Count == 1)
+            {
+                return new PersonViewModel
+                {
+                    Id = faces[0].Person.Id,
+                    FirstName = faces[0].Person.FirstName,
+                    LastName = faces[0].Person.LastName,
+                    Patronymic = faces[0].Person.Patronymic
+                };
+            }
+
+            // Проверка коллизий
+            Dictionary<int, PersonViewModel> people = new Dictionary<int, PersonViewModel>();
+
+            foreach (Face face in faces)
+            {
+                if (people.ContainsKey(face.PersonId))
+                    continue;
+                var storagePhoto = await _googleStorage.Read(face.PhotoName);
+                if (storagePhoto.SequenceEqual(photo))
+                {
+                    var personVM = new PersonViewModel()
+                    {
+                        Id = face.Person.Id,
+                        FirstName = face.Person.FirstName,
+                        LastName = face.Person.LastName,
+                        Patronymic = face.Person.Patronymic
+                    };
+
+                    people.Add(face.PersonId, personVM);
+                }
+            }
+            return new JsonResult(people.Values);
         }
     }
 }

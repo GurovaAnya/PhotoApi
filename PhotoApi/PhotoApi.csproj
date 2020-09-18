@@ -6,6 +6,25 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200909165556_Initial.cs" />
+    <Compile Remove="Migrations\20200909165556_Initial.Designer.cs" />
+    <Compile Remove="Migrations\20200909191527_AddSeed.cs" />
+    <Compile Remove="Migrations\20200909191527_AddSeed.Designer.cs" />
+    <Compile Remove="Migrations\20200912162636_ChangePhotoType.cs" />
+    <Compile Remove="Migrations\20200912162636_ChangePhotoType.Designer.cs" />
+    <Compile Remove="Migrations\20200916195247_FaceChange.cs" />
+    <Compile Remove="Migrations\20200916195247_FaceChange.Designer.cs" />
+    <Compile Remove="Migrations\20200917175852_FaceChanged2.cs" />
+    <Compile Remove="Migrations\20200917175852_FaceChanged2.Designer.cs" />
+    <Compile Remove="Migrations\20200917185651_FaceChanged3.cs" />
+    <Compile Remove="Migrations\20200917185651_FaceChanged3.Designer.cs" />
+    <Compile Remove="Migrations\20200917190238_Final.cs" />
+    <Compile Remove="Migrations\20200917190238_Final.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="AutoMapper" Version="10.0.0" />
+    <PackageReference Include="Google.Cloud.Storage.V1" Version="3.3.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Formatters.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.EntityFrameworkCore" Version="3.1.8" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Sqlite" Version="3.1.7" />
@@ -15,6 +34,10 @@
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
     <PackageReference Include="Microsoft.VisualStudio.Web.CodeGeneration.Design" Version="3.1.4" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Folder Include="Migrations\" />
   </ItemGroup>
 
 

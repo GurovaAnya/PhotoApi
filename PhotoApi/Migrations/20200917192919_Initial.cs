@@ -1,5 +1,4 @@
-﻿using System;
-using Microsoft.EntityFrameworkCore.Migrations;
+﻿using Microsoft.EntityFrameworkCore.Migrations;
 
 namespace PhotoApi.Migrations
 {
@@ -29,7 +28,8 @@ namespace PhotoApi.Migrations
                     Id = table.Column<int>(nullable: false)
                         .Annotation("SqlServer:Identity", "1, 1"),
                     PersonId = table.Column<int>(nullable: false),
-                    Photo = table.Column<byte[]>(nullable: true)
+                    PhotoName = table.Column<string>(nullable: true),
+                    PhotoHash = table.Column<int>(nullable: false)
                 },
                 constraints: table =>
                 {
@@ -42,15 +42,35 @@ namespace PhotoApi.Migrations
                         onDelete: ReferentialAction.Cascade);
                 });
 
+            migrationBuilder.InsertData(
+                table: "People",
+                columns: new[] { "Id", "FirstName", "LastName", "Patronymic" },
+                values: new object[] { -1, "Anna", "Gurova", "Aleksandrovna" });
+
+            migrationBuilder.InsertData(
+                table: "People",
+                columns: new[] { "Id", "FirstName", "LastName", "Patronymic" },
+                values: new object[] { -2, "Petr", "Petrov", "Petrovich" });
+
+            migrationBuilder.InsertData(
+                table: "Faces",
+                columns: new[] { "Id", "PersonId", "PhotoHash", "PhotoName" },
+                values: new object[] { -1, -1, 148592049, null });
+
+            migrationBuilder.InsertData(
+                table: "Faces",
+                columns: new[] { "Id", "PersonId", "PhotoHash", "PhotoName" },
+                values: new object[] { -2, -2, 148593649, null });
+
             migrationBuilder.CreateIndex(
                 name: "IX_Faces_PersonId",
                 table: "Faces",
                 column: "PersonId");
 
             migrationBuilder.CreateIndex(
-                name: "IX_Faces_Photo",
+                name: "IX_Faces_PhotoHash",
                 table: "Faces",
-                column: "Photo");
+                column: "PhotoHash");
         }
 
         protected override void Down(MigrationBuilder migrationBuilder)
