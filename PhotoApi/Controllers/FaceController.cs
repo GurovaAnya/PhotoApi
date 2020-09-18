@@ -32,7 +32,7 @@ namespace PhotoApi.Controllers
             var faceVMs = new List<FaceViewModel>();
             foreach (var face in faces)
                 faceVMs.Add(await MapToViewModel(face,_googleStorage));
-            return faceVMs;
+            return faceVMs; 
         }
 
         
@@ -132,8 +132,8 @@ namespace PhotoApi.Controllers
             _context.Faces.Add(face);
 
             await _context.SaveChangesAsync();
-
-            return CreatedAtAction("GetFace", new { id = face.Id, personId = face.PersonId }, face);
+            faceVM.Id = face.Id;
+            return CreatedAtAction("GetFace", new { id = face.Id, personId = face.PersonId }, faceVM);
         }
 
         // DELETE: api/person/{personId}/Face/5
