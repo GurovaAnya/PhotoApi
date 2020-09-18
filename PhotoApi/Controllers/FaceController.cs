@@ -17,10 +17,10 @@ namespace PhotoApi.Controllers
         private readonly PhotoDbContext _context;
         private readonly GoogleStorage _googleStorage;
 
-        public FaceController(PhotoDbContext context)
+        public FaceController(PhotoDbContext context, GoogleStorage googleStorage)
         {
             _context = context;
-            _googleStorage = new GoogleStorage("ivory-plane-277612", "ivory-plane-277612-bucket");
+            _googleStorage = googleStorage;
         }
 
         // GET: api/person/{personId}/Face

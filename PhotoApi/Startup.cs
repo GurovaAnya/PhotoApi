@@ -11,6 +11,7 @@ using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Logging;
 using PhotoApi.Models;
+using PhotoApi.Storage;
 
 namespace PhotoApi
 {
@@ -28,6 +29,7 @@ namespace PhotoApi
         {
             services.AddControllers();
             services.AddDbContext<PhotoDbContext>();
+            services.AddSingleton<GoogleStorage>();
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.

@@ -12,10 +12,10 @@ namespace PhotoApi.Storage
         string bucketName;
         private StorageClient _storageClient;
 
-        public GoogleStorage(string projectId, string bucketName)
+        public GoogleStorage()
         {
-            this.projectId = projectId;
-            this.bucketName = bucketName;
+            this.projectId = "ivory-plane-277612";
+            this.bucketName = "ivory-plane-277612-bucket";
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", @"bin\Debug\netcoreapp3.1\GoogleCloudInfo.json");
             var credential = GoogleCredential.GetApplicationDefault();
             _storageClient = StorageClient.Create();
