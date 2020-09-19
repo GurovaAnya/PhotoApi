@@ -28,6 +28,9 @@ namespace PhotoApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FaceViewModel>>> GetFaces(int personId)
         {
+            var person = await _context.People.Where(p => p.Id == personId).SingleAsync();
+            if (person == null)
+                return BadRequest();
             var faces = await _context.Faces.Where(f => f.PersonId == personId).ToListAsync();
             var faceVMs = new List<FaceViewModel>();
             foreach (var face in faces)
