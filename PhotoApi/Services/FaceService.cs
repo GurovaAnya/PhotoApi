@@ -1,35 +1,35 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PhotoApi.Exceptions;
 using PhotoApi.Models;
-using PhotoApi.Storage;
 using PhotoApi.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PhotoApi.Services.Interfaces;
 
 namespace PhotoApi.Services
 {
-    public class FaceService:IFaceService
+    public class FaceService : IFaceService
     {
         private readonly PhotoDbContext _context;
-        private readonly GoogleStorage _googleStorage;
+        private readonly IStorageAccessingService _googleStorageService;
 
-        public FaceService(PhotoDbContext context, GoogleStorage googleStorage)
+        public FaceService(PhotoDbContext context, IStorageAccessingService googleStorageService)
         {
             _context = context;
-            _googleStorage = googleStorage;
+            _googleStorageService = googleStorageService;
         }
 
         public async Task<IEnumerable<FaceViewModel>> GetFaces(int personId)
         {
             var person = await _context.People.Where(p => p.Id == personId).SingleAsync();
             if (person == null)
-                throw new BadRequestException();
+                throw new BadRequestException("Не указан идентификатор пользователя");
             var faces = await _context.Faces.Where(f => f.PersonId == personId).ToListAsync();
             var faceViewModels = new List<FaceViewModel>();
             foreach (var face in faces)
-                faceViewModels.Add(await MapToViewModel(face, _googleStorage));
+                faceViewModels.Add(await MapToViewModel(face, _googleStorageService));
             return faceViewModels;
         }
 
@@ -39,11 +39,11 @@ namespace PhotoApi.Services
             var face = await _context.Faces.Where(f => f.PersonId == personId && f.Id == id).SingleAsync();
             if (face == null)
             {
-                throw new NotFoundException();
+                throw new NotFoundException("Лица с такими параметрами не найдено");
             }
 
             // Получение фото из облака
-            var photo = await _googleStorage.Read(face.PhotoName);
+            var photo = await _googleStorageService.Read(face.PhotoName);
 
             var faceViewModel = new FaceViewModel() { Id = face.Id, PersonId = personId, Photo = photo };
             return faceViewModel;
@@ -54,14 +54,14 @@ namespace PhotoApi.Services
         {
             if (id != faceViewModel.Id)
             {
-                throw new BadRequestException();
+                throw new BadRequestException("Данные запроса не совпадают");
             }
 
             var face = await _context.Faces.Where(f => f.Id == id).SingleAsync();
 
             if (personId != face.PersonId)
             {
-                throw new BadRequestException();
+                throw new BadRequestException("Данные запроса не совпадают");
             }
 
             face.PersonId = faceViewModel.PersonId;
@@ -84,15 +84,15 @@ namespace PhotoApi.Services
                 await _context.SaveChangesAsync();
                 if (oldName != null)
                 {
-                    await _googleStorage.Delete(oldName);
-                    await _googleStorage.Write(faceViewModel.Photo, face.PhotoName);
+                    await _googleStorageService.Delete(oldName);
+                    await _googleStorageService.Write(faceViewModel.Photo, face.PhotoName);
                 }
             }
             catch (DbUpdateConcurrencyException)
             {
                 if (!FaceExists(id))
                 {
-                    throw new NotFoundException();
+                    throw new NotFoundException("Лица с такими параметрами не найдено");
                 }
                 else
                 {
@@ -105,18 +105,12 @@ namespace PhotoApi.Services
         {
             if (personId != faceViewModel.PersonId)
             {
-                throw new BadRequestException();
+                throw new BadRequestException("Данные запроса не совпадают");
             }
 
             string path = DateTime.UtcNow.Ticks.ToString();
-            await _googleStorage.Write(faceViewModel.Photo, path);
-            var face = new Face()
-            {
-                Id = faceViewModel.Id,
-                PersonId = faceViewModel.PersonId,
-                PhotoHash = Face.CreateHash(faceViewModel.Photo),
-                PhotoName = path
-            };
+            await _googleStorageService.Write(faceViewModel.Photo, path);
+            var face = MapToModel(faceViewModel, path);
             _context.Faces.Add(face);
 
             await _context.SaveChangesAsync();
@@ -130,18 +124,18 @@ namespace PhotoApi.Services
             var face = await _context.Faces.FindAsync(id);
             if (face == null)
             {
-                throw new NotFoundException();
+                throw new NotFoundException("Лица с такими параметрами не найдено");
             }
 
             if (face.PersonId != personId)
             {
-                throw new BadRequestException();
+                throw new BadRequestException("Данные запроса не совпадают");
             }
 
-            var photo = await _googleStorage.Read(face.PhotoName);
+            var photo = await _googleStorageService.Read(face.PhotoName);
             _context.Faces.Remove(face);
             await _context.SaveChangesAsync();
-            await _googleStorage.Delete(face.PhotoName);
+            await _googleStorageService.Delete(face.PhotoName);
 
             return new FaceViewModel() { Id = face.Id, PersonId = face.PersonId, Photo = photo };
         }
@@ -151,13 +145,24 @@ namespace PhotoApi.Services
             return _context.Faces.Any(e => e.Id == id);
         }
 
-        private static async Task<FaceViewModel> MapToViewModel(Face face, GoogleStorage googleStorage)
+        private static async Task<FaceViewModel> MapToViewModel(Face face, IStorageAccessingService googleStorageService)
         {
             return new FaceViewModel
             {
                 Id = face.Id,
-                Photo = await googleStorage.Read(face.PhotoName),
+                Photo = await googleStorageService.Read(face.PhotoName),
                 PersonId = face.PersonId
+            };
+        }
+
+        private static Face MapToModel(FaceViewModel faceViewModel, string path)
+        {
+            return new Face()
+            {
+                Id = faceViewModel.Id,
+                PersonId = faceViewModel.PersonId,
+                PhotoHash = Face.CreateHash(faceViewModel.Photo),
+                PhotoName = path
             };
         }
     }

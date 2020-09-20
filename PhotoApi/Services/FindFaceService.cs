@@ -1,24 +1,24 @@
 ﻿using Microsoft.EntityFrameworkCore;
 using PhotoApi.Exceptions;
 using PhotoApi.Models;
-using PhotoApi.Storage;
 using PhotoApi.ViewModels;
 using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PhotoApi.Services.Interfaces;
 
 namespace PhotoApi.Services
 {
     public class FindFaceService : IFindFaceService
     {
         private readonly PhotoDbContext _context;
-        private readonly GoogleStorage _googleStorage;
+        private readonly IStorageAccessingService _googleStorageService;
 
-        public FindFaceService(PhotoDbContext context, GoogleStorage googleStorage)
+        public FindFaceService(PhotoDbContext context, IStorageAccessingService googleStorageService)
         {
             _context = context;
-            _googleStorage = googleStorage;
+            _googleStorageService = googleStorageService;
         }
 
         public async Task<IEnumerable<PersonViewModel>> FindFace(byte[] photo)
@@ -28,7 +28,7 @@ namespace PhotoApi.Services
 
             if (faces.Count == 0)
             {
-                throw new NotFoundException();
+                throw new NotFoundException("Человека с данным лицом");
             }
 
             if (faces.Count == 1)
@@ -51,7 +51,7 @@ namespace PhotoApi.Services
             {
                 if (people.ContainsKey(face.PersonId))
                     continue;
-                var storagePhoto = await _googleStorage.Read(face.PhotoName);
+                var storagePhoto = await _googleStorageService.Read(face.PhotoName);
                 if (storagePhoto.SequenceEqual(photo))
                 {
                     var personViewModel = new PersonViewModel()

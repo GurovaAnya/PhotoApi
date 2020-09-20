@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
 using PhotoApi.Models;
 using PhotoApi.Services;
+using PhotoApi.Services.Interfaces;
 using PhotoApi.Storage;
 using PhotoApi.ViewModels;
 

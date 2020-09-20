@@ -6,6 +6,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using PhotoApi.Services.Interfaces;
 
 namespace PhotoApi.Services
 {
@@ -28,7 +29,7 @@ namespace PhotoApi.Services
 
             if (person == null)
             {
-                throw new NotFoundException();
+                throw new NotFoundException("Человека с такими параметрами не найдено");
             }
 
             return MapToViewModel(person);
@@ -38,7 +39,7 @@ namespace PhotoApi.Services
         {
             if (id != personViewModel.Id)
             {
-                throw new BadRequestException();
+                throw new BadRequestException("Данные запроса не совпадают");
             }
 
             var person = MapToModel(personViewModel);
@@ -52,7 +53,7 @@ namespace PhotoApi.Services
             {
                 if (!PersonExists(id))
                 {
-                    throw new NotFoundException();
+                    throw new NotFoundException("Человека с такими параметрами не найдено");
                 }
                 else
                 {
@@ -75,7 +76,7 @@ namespace PhotoApi.Services
             var person = await _context.People.FindAsync(id);
             if (person == null)
             {
-                throw new NotFoundException();
+                throw new NotFoundException("Человека с такими параметрами не найдено");
             }
 
             _context.People.Remove(person);

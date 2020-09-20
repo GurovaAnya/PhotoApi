@@ -1,10 +1,8 @@
-﻿using PhotoApi.ViewModels;
-using System;
-using System.Collections.Generic;
-using System.Linq;
+﻿using System.Collections.Generic;
 using System.Threading.Tasks;
+using PhotoApi.ViewModels;
 
-namespace PhotoApi.Services
+namespace PhotoApi.Services.Interfaces
 {
     public interface IFindFaceService
     {

@@ -7,6 +7,7 @@ using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PhotoApi.Models;
 using PhotoApi.Services;
+using PhotoApi.Services.Interfaces;
 using PhotoApi.Storage;
 using PhotoApi.ViewModels;
 
