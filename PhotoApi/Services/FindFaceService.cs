@@ -29,7 +29,7 @@ namespace PhotoApi.Services
 
             if (faces.Count == 0)
             {
-                throw new NotFoundException("Человека с данным лицом");
+                throw new NotFoundException("Человека с данным лицом не найдено");
             }
 
             if (faces.Count == 1)

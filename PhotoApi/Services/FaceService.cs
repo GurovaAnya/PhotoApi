@@ -24,7 +24,7 @@ namespace PhotoApi.Services
 
         public async Task<IEnumerable<FaceViewModel>> GetFaces(int personId)
         {
-            var person = await _context.People.Where(p => p.Id == personId).SingleAsync();
+            var person = await _context.People.Where(p => p.Id == personId).SingleOrDefaultAsync();
             if (person == null)
                 throw new BadRequestException("Не указан идентификатор пользователя");
             var faces = await _context.Faces.Where(f => f.PersonId == personId).ToListAsync();
@@ -37,7 +37,7 @@ namespace PhotoApi.Services
 
         public async Task<FaceViewModel> GetFace(int id, int personId)
         {
-            var face = await _context.Faces.Where(f => f.PersonId == personId && f.Id == id).SingleAsync();
+            var face = await _context.Faces.Where(f => f.PersonId == personId && f.Id == id).SingleOrDefaultAsync();
             if (face == null)
             {
                 throw new NotFoundException("Лица с такими параметрами не найдено");
@@ -58,7 +58,12 @@ namespace PhotoApi.Services
                 throw new BadRequestException("Данные запроса не совпадают");
             }
 
-            var face = await _context.Faces.Where(f => f.Id == id).SingleAsync();
+            var face = await _context.Faces.Where(f => f.Id == id).SingleOrDefaultAsync();
+
+            if (face==null)
+            {
+                throw new NotFoundException("Лица с такими параметрами не найдено");
+            }
 
             if (personId != face.PersonId)
             {
