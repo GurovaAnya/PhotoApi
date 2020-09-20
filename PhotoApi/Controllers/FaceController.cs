@@ -6,6 +6,7 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.CodeAnalysis.CSharp.Syntax;
 using Microsoft.EntityFrameworkCore;
 using PhotoApi.Models;
+using PhotoApi.Services;
 using PhotoApi.Storage;
 using PhotoApi.ViewModels;
 
@@ -15,27 +16,19 @@ namespace PhotoApi.Controllers
     [ApiController]
     public class FaceController : ControllerBase
     {
-        private readonly PhotoDbContext _context;
-        private readonly GoogleStorage _googleStorage;
+        private readonly IFaceService _faceService;
 
-        public FaceController(PhotoDbContext context, GoogleStorage googleStorage)
+        public FaceController(IFaceService faceService)
         {
-            _context = context;
-            _googleStorage = googleStorage;
+            _faceService = faceService;
         }
 
         // GET: api/person/{personId}/Face
         [HttpGet]
         public async Task<ActionResult<IEnumerable<FaceViewModel>>> GetFaces(int personId)
         {
-            var person = await _context.People.Where(p => p.Id == personId).SingleAsync();
-            if (person == null)
-                return BadRequest();
-            var faces = await _context.Faces.Where(f => f.PersonId == personId).ToListAsync();
-            var faceVMs = new List<FaceViewModel>();
-            foreach (var face in faces)
-                faceVMs.Add(await MapToViewModel(face,_googleStorage));
-            return faceVMs; 
+            var faces = await _faceService.GetFaces(personId);
+            return Ok(faces); 
         }
 
         
@@ -43,72 +36,17 @@ namespace PhotoApi.Controllers
         [HttpGet("{id}")]
         public async Task<ActionResult<FaceViewModel>> GetFace(int id, int personId)
         {
-            var face = await _context.Faces.Where(f => f.PersonId == personId && f.Id == id).SingleAsync();
-            if (face == null)
-            {
-                return NotFound();
-            }
-
-            // Получение фото из облака
-            var photo = await _googleStorage.Read(face.PhotoName);
-
-            var faceViewModel = new FaceViewModel() { Id = face.Id, PersonId = personId, Photo = photo };
-            return faceViewModel;
+            var face = await _faceService.GetFace(id, personId);
+            return new JsonResult(face);
         }
 
         // PUT: api/person/{personId}/Face/5
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutFace(int id, FaceViewModel faceVM, int personId)
+        public async Task<IActionResult> PutFace(int id, FaceViewModel faceViewModel, int personId)
         {
-            if (id != faceVM.Id)
-            {
-                return BadRequest();
-            }
-
-            var face = await _context.Faces.Where(f => f.Id == id).SingleAsync();
-
-            if (personId != face.PersonId)
-            {
-                return BadRequest();
-            }
-
-            face.PersonId = faceVM.PersonId;
-
-
-            int photoHash = Face.CreateHash(faceVM.Photo);
-            string oldName = null;
-            // Если фото поменялось
-            if (photoHash != face.PhotoHash)
-            {
-                oldName = face.PhotoName;
-                face.PhotoName = DateTime.UtcNow.Ticks.ToString();
-                face.PhotoHash = photoHash;
-            }
-
-            _context.Entry(face).State = EntityState.Modified;
-
-            try
-            {
-                await _context.SaveChangesAsync();
-                if (oldName != null)
-                {
-                    await _googleStorage.Delete(oldName);
-                    await _googleStorage.Write(faceVM.Photo, face.PhotoName);
-                }
-            }
-            catch (DbUpdateConcurrencyException)
-            {
-                if (!FaceExists(id))
-                {
-                    return NotFound();
-                }
-                else
-                {
-                    throw;
-                }
-            }
+            await _faceService.PutFace(id, faceViewModel, personId);
             return NoContent();
         }
 
@@ -116,65 +54,18 @@ namespace PhotoApi.Controllers
         // To protect from overposting attacks, enable the specific properties you want to bind to, for
         // more details, see https://go.microsoft.com/fwlink/?linkid=2123754.
         [HttpPost]
-        public async Task<ActionResult<FaceViewModel>> PostFace( [FromBody] FaceViewModel faceVM, int personId)
+        public async Task<ActionResult<FaceViewModel>> PostFace( [FromBody] FaceViewModel faceViewModel, int personId)
         {
-            if (personId != faceVM.PersonId) 
-            {
-                return BadRequest();
-            }
-
-            string path = DateTime.UtcNow.Ticks.ToString();
-            await _googleStorage.Write(faceVM.Photo, path);
-            var face = new Face() 
-            {
-                Id = faceVM.Id,
-                PersonId = faceVM.PersonId,
-                PhotoHash = Face.CreateHash(faceVM.Photo),
-                PhotoName = path
-            };
-            _context.Faces.Add(face);
-
-            await _context.SaveChangesAsync();
-            faceVM.Id = face.Id;
-            return CreatedAtAction("GetFace", new { id = face.Id, personId = face.PersonId }, faceVM);
+            var face = await _faceService.PostFace(faceViewModel, personId);
+            return face;
         }
 
         // DELETE: api/person/{personId}/Face/5
         [HttpDelete("{id}")]
         public async Task<ActionResult<FaceViewModel>> DeleteFace(int id, int personId)
         {
-            var face = await _context.Faces.FindAsync(id);
-            if (face == null)
-            {
-                return NotFound();
-            }
-
-            if (face.PersonId != personId)
-            {
-                return BadRequest();
-            }
-
-            var photo = await _googleStorage.Read(face.PhotoName);
-            _context.Faces.Remove(face);
-            await _context.SaveChangesAsync();
-            await _googleStorage.Delete(face.PhotoName);
-
-            return new FaceViewModel() {Id = face.Id, PersonId = face.PersonId, Photo = photo};
-        }
-
-        private bool FaceExists(int id)
-        {
-            return _context.Faces.Any(e => e.Id == id);
-        }
-
-        private static async Task<FaceViewModel> MapToViewModel(Face face, GoogleStorage googleStorage)
-        {
-            return new FaceViewModel
-            {
-                Id = face.Id,
-                Photo = await googleStorage.Read(face.PhotoName),
-                PersonId = face.PersonId
-            };
+            var face = await _faceService.DeleteFace(id, personId);
+            return face;
         }
     }
 }

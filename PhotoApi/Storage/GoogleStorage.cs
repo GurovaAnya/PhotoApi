@@ -6,15 +6,13 @@ using Google.Cloud.Storage.V1;
 
 namespace PhotoApi.Storage
 {
-    public class GoogleStorage
+    public class GoogleStorage : IDisposable
     {
-        string projectId;
         string bucketName;
         private StorageClient _storageClient;
 
         public GoogleStorage()
         {
-            this.projectId = "ivory-plane-277612";
             this.bucketName = "ivory-plane-277612-bucket";
             Environment.SetEnvironmentVariable("GOOGLE_APPLICATION_CREDENTIALS", Directory.GetCurrentDirectory() + "/appsettings.json");
             var credential = GoogleCredential.GetApplicationDefault();
@@ -42,6 +40,11 @@ namespace PhotoApi.Storage
         public async Task Delete(string fileName)
         {
             await _storageClient.DeleteObjectAsync(bucketName, fileName);
+        }
+
+        public void Dispose()
+        {
+            _storageClient.Dispose();
         }
     }
 }
