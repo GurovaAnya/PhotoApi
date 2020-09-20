@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using PhotoApi.Services.Interfaces;
+using PhotoApi.Hashing;
 
 namespace PhotoApi.Services
 {
@@ -23,7 +24,7 @@ namespace PhotoApi.Services
 
         public async Task<IEnumerable<PersonViewModel>> FindFace(byte[] photo)
         {
-            int hash = Face.CreateHash(photo);
+            int hash = Hasher.CreateHash(photo);
             var faces = await _context.Faces.Where(f => f.PhotoHash == hash).Include(f => f.Person).ToListAsync();
 
             if (faces.Count == 0)

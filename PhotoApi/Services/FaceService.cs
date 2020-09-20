@@ -7,6 +7,7 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using PhotoApi.Services.Interfaces;
+using PhotoApi.Hashing;
 
 namespace PhotoApi.Services
 {
@@ -67,7 +68,7 @@ namespace PhotoApi.Services
             face.PersonId = faceViewModel.PersonId;
 
 
-            int photoHash = Face.CreateHash(faceViewModel.Photo);
+            int photoHash = Hasher.CreateHash(faceViewModel.Photo);
             string oldName = null;
             // Если фото поменялось
             if (photoHash != face.PhotoHash)
@@ -161,7 +162,7 @@ namespace PhotoApi.Services
             {
                 Id = faceViewModel.Id,
                 PersonId = faceViewModel.PersonId,
-                PhotoHash = Face.CreateHash(faceViewModel.Photo),
+                PhotoHash = Hasher.CreateHash(faceViewModel.Photo),
                 PhotoName = path
             };
         }
