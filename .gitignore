@@ -1,3 +1,5 @@
 bin\debug\netcoreapp3.1\GoogeCloudInfo.json
 appsettings.json
 
+ obj/*
+ bin/*
