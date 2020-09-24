@@ -65,9 +65,9 @@ namespace PhotoApi.Services
         public async Task<PersonViewModel> PostPerson(PersonViewModel personViewModel)
         {
             var person = MapToModel(personViewModel);
-            _context.People.Add(person);
+            await _context.People.AddAsync(person);
             await _context.SaveChangesAsync();
-
+            personViewModel.Id = person.Id;
             return personViewModel;
         }
 
